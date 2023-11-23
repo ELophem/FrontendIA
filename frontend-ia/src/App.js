@@ -4,6 +4,7 @@ import {Navbar} from './Navbar/Navbar';
 import HomePage from './Home/Home';
 import GalleryPage from './Gallery/Gallery';
 import UploadPage from './Upload/Upload';
+import DisplayPage from './Display/Display';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/Gallery" element={<GalleryPage />}/>
             <Route path="/Upload" element={<UploadPage />} />
+            <Route path= "/Display" element={<DisplayPage/>}/>
           </Routes>
         </Router>
 
