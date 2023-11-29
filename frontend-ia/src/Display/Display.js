@@ -1,43 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import { storage } from '../Firebase/firebaseConfig'; // Import your Firebase storage instance
 import { list, ref, getDownloadURL } from 'firebase/storage';
+import { collection, getDocs,getFirestore } from 'firebase/firestore'; // Import Firestore functions for querying data
 import './display.css';
 
-const Gallery = () => {
-  const [imageURLs, setImageURLs] = useState([]);
+const Display = () => {
+  const [imageData, setImageData] = useState([]);
 
   useEffect(() => {
-    // Function to fetch image URLs from Firebase Storage
-    const fetchImageURLs = async () => {
+    const fetchData = async () => {
+      // Fetch image URLs from Firebase Storage
       const storageRef = ref(storage); // Reference to Firebase Storage
       const imagesList = await list(storageRef); // Replace with your folder name
 
-      console.log(imagesList)
       try {
-
         // Fetch download URLs for all images in the folder
-        const urls = await Promise.all(
+        const imageUrls = await Promise.all(
           imagesList.items.map(async (itemRef) => {
             return await getDownloadURL(itemRef);
           })
         );
 
-        setImageURLs(urls);
+        // Fetch person data from Firestore
+        const db = getFirestore(); // Assuming you've initialized Firebase Firestore
+        const personsCollection = collection(db, 'Persons'); // Replace with your collection name
+        const querySnapshot = await getDocs(personsCollection);
+
+        const personsData = [];
+        let index = 0;
+
+        querySnapshot.forEach((doc) => {
+          const person = doc.data();
+          if (index < imageUrls.length) {
+            personsData.push({
+              name: person.name,
+              surname: person.surname,
+              photo: imageUrls[index],
+            });
+            index++;
+          }
+        });
+
+        setImageData(personsData);
       } catch (error) {
-        console.error('Error fetching images:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchImageURLs(); // Call the function to fetch image URLs
+    fetchData();
   }, []);
 
   return (
     <div className="gallery">
       <h1>Image Gallery</h1>
       <div className="image-grid">
-        {imageURLs.map((url, index) => (
+        {imageData.map((person, index) => (
           <div key={index} className="image-item">
-            <img src={url} alt={`Image ${index}`} />
+            <img src={person.photo} alt={``} />
+            <p>{person.name} {person.surname}</p>
           </div>
         ))}
       </div>
@@ -45,4 +65,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default Display;
