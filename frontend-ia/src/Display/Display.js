@@ -1,14 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { storage } from '../Firebase/firebaseConfig'; // Import your Firebase storage instance
+import { list, ref, getDownloadURL } from 'firebase/storage';
+import './display.css';
 
-const DisplayPage = () => {
-  // You can define functions or variables here
+const Gallery = () => {
+  const [imageURLs, setImageURLs] = useState([]);
+
+  useEffect(() => {
+    // Function to fetch image URLs from Firebase Storage
+    const fetchImageURLs = async () => {
+      const storageRef = ref(storage); // Reference to Firebase Storage
+      const imagesList = await list(storageRef); // Replace with your folder name
+
+      console.log(imagesList)
+      try {
+
+        // Fetch download URLs for all images in the folder
+        const urls = await Promise.all(
+          imagesList.items.map(async (itemRef) => {
+            return await getDownloadURL(itemRef);
+          })
+        );
+
+        setImageURLs(urls);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    };
+
+    fetchImageURLs(); // Call the function to fetch image URLs
+  }, []);
 
   return (
-    <div>
-      <h1>Welcome to My Page</h1>
-      <p>This is where we wille display the result of the IA</p>
+    <div className="gallery">
+      <h1>Image Gallery</h1>
+      <div className="image-grid">
+        {imageURLs.map((url, index) => (
+          <div key={index} className="image-item">
+            <img src={url} alt={`Image ${index}`} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default DisplayPage;
+export default Gallery;
