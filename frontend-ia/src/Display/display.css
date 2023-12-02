@@ -1,21 +1,30 @@
 .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 900px; /* Adjust as needed */
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .image-item {
-    width: calc(33.33% - 10px); /* Three images per row with some space between */
-    margin-bottom: 20px;
-    box-sizing: border-box;
-  }
-  
-  .image-item img {
-    width: 100%;
-    display: block;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: 900px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.image-item {
+  flex: 0 0 calc(33.33% - 20px); /* Three images per row with space between */
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  padding: 10px;
+  text-align: center;
+}
+
+.image-box {
+  height: 200px; /* Set a fixed height for uniformity */
+  overflow: hidden; /* Ensure the image does not exceed the container */
+}
+
+.image-item img {
+  width: auto;
+  height: 100%;
+  display: block;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  object-fit: cover; /* Maintain aspect ratio and fill the container */
+}

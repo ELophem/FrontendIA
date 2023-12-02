@@ -56,13 +56,19 @@ const Display = () => {
       <div className="image-grid">
         {imageData.map((person, index) => (
           <div key={index} className="image-item">
-            <img src={person.photo} alt={``} />
-            <p>{person.name} {person.surname}</p>
+            <div className="image-box">
+              <img src={person.photo} alt={``} />
+            </div>
+            <div className="image-details">
+              <p>{person.name}</p>
+              <p>{person.surname}</p>
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
+  
 };
 
 export default Display;
