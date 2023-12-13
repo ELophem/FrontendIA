@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { storage } from '../Firebase/firebaseConfig'; // Import your Firebase storage instance
+import { storage } from '../Firebase/firebaseConfig';
 import { list, ref, getDownloadURL } from 'firebase/storage';
-import { collection, getDocs,getFirestore } from 'firebase/firestore'; // Import Firestore functions for querying data
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import './display.css';
 
 const Display = () => {
   const [imageData, setImageData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       // Fetch image URLs from Firebase Storage
-      const storageRef = ref(storage); // Reference to Firebase Storage
-      const imagesList = await list(storageRef); // Replace with your folder name
+      const storageRef = ref(storage);
+      const imagesList = await list(storageRef);
 
       try {
-        // Fetch download URLs for all images in the folder
         const imageUrls = await Promise.all(
           imagesList.items.map(async (itemRef) => {
             return await getDownloadURL(itemRef);
           })
         );
 
-        // Fetch person data from Firestore
-        const db = getFirestore(); // Assuming you've initialized Firebase Firestore
-        const personsCollection = collection(db, 'Persons'); // Replace with your collection name
+        const db = getFirestore();
+        const personsCollection = collection(db, 'Persons');
         const querySnapshot = await getDocs(personsCollection);
 
         const personsData = [];
@@ -50,11 +49,28 @@ const Display = () => {
     fetchData();
   }, []);
 
+  const filteredImageData = imageData.filter((person) => {
+    return (
+      person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      person.surname.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <div className="gallery">
       <h1>Image Gallery</h1>
+      <input
+        type="text"
+        placeholder="Search by name or surname"
+        value={searchTerm}
+        onChange={handleSearch}
+      />
       <div className="image-grid">
-        {imageData.map((person, index) => (
+        {filteredImageData.map((person, index) => (
           <div key={index} className="image-item">
             <div className="image-box">
               <img src={person.photo} alt={``} />
@@ -68,7 +84,6 @@ const Display = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Display;

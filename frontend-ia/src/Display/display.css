@@ -1,10 +1,22 @@
 .gallery {
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.image-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  max-width: 900px; /* Adjust as needed */
-  margin: 0 auto;
-  padding: 20px;
 }
 
 .image-item {
@@ -16,15 +28,20 @@
 }
 
 .image-box {
-  height: 200px; /* Set a fixed height for uniformity */
+  width: 200px; /* Set a fixed width for the image container */
+  height: 200px; /* Set a fixed height for the image container */
   overflow: hidden; /* Ensure the image does not exceed the container */
 }
 
 .image-item img {
-  width: auto;
-  height: 100%;
+  width: 100%; /* Make the image fill its container */
+  height: 100%; /* Make the image fill its container */
   display: block;
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   object-fit: cover; /* Maintain aspect ratio and fill the container */
+}
+
+.image-details {
+  margin-top: 10px;
 }
