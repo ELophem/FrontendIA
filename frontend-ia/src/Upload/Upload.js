@@ -29,7 +29,6 @@
 // export default UploadPage;
 
 import React, { useState } from 'react';
-// import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,7 +52,9 @@ const UploadPage = () => {
         console.log('Response from backend:', response.data);
 
         // Redirect to GalleryPage after sending the image to the backend
-        navigate(`/Gallery?file=${encodeURIComponent(file)}`);
+        navigate(`/Gallery?file=${encodeURIComponent(URL.createObjectURL(file))}`,{
+          state: {names: response.data}
+        });
       } catch (error) {
         console.error('Error sending image to backend:', error);
       }
@@ -67,8 +68,12 @@ const UploadPage = () => {
     <div>
       <h2>Add Image:</h2>
       <input type="file" onChange={handleChange} />
+      {file && (
+        <div style={{ maxWidth: '400px' }}>
+          <img src={URL.createObjectURL(file)} alt="Uploaded file" style={{ maxWidth: '100%', height: 'auto' }} />
+        </div>
+      )}     
       <button onClick={handleGoToGallery}>Go to Gallery</button>
-      <p>This is a simple example of a React page.</p>
     </div>
   );
 };
