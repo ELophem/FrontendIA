@@ -1,62 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
-import './display.css'
-const DisplayPersons = () => {
-  const [personsData, setPersonsData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { storage } from '../Firebase/firebaseConfig';
+import { ref, uploadBytes } from 'firebase/storage';
+import { v4 } from 'uuid';
+import { getDownloadURL} from 'firebase/storage'; 
+import { firestore } from '../Firebase/firebaseConfig';
+import { addDoc, collection } from 'firebase/firestore';
+ 
+const DisplayPage = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const file = params.get('file');
+ 
+  const canvasRef = useRef(null);
+  const [imageDisplayed, setImageDisplayed] = useState(false);
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const names = location.state?.names.result;
+   
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const db = getFirestore();
-        const personsCollection = collection(db, 'Persons');
-        const querySnapshot = await getDocs(personsCollection);
+    if (file && !imageDisplayed) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+ 
+      const image = new Image();
+      image.src = file;
+ 
+      image.onload = () =>  {
 
-        const persons = querySnapshot.docs.map((doc) => doc.data());
-        setPersonsData(persons);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        const centerX = canvas.width /2 - image.width/2;
+        const centerY = canvas.height/2 - image.height/2;
+ 
+        canvas.width = image.width;
+        canvas.height = image.height;
+        
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.drawImage(image, centerX, centerY);
+ 
+        const AIimage = canvas.toDataURL('image/jpeg');
+       
+        const AIimageElement = document.createElement('img');
+        AIimageElement.src = AIimage;
+
+        const displayContainer = document.getElementById('display-container');
+        displayContainer.innerHTML = '';
+        displayContainer.appendChild(AIimageElement);
+
+        setImageDisplayed(true);
+      };
+    }
+}, [file, imageDisplayed, names]);
+ 
+  useEffect(() => {
+    if (imageDisplayed && !imageUploaded) {
+      uploadImage();
+    }
+  }, [imageDisplayed, imageUploaded]);
+ 
+  const uploadImage = async () => {
+    try {
+      const canvas = canvasRef.current;
+      const AIimage = canvas.toDataURL('image/jpeg');
+ 
+      const imageRef = ref(storage, `${v4()}.jpg`);
+      const byteCharacters = atob(AIimage.split(',')[1]);
+      const byteNumbers = new Array(byteCharacters.length);
+ 
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-    };
+ 
+      const byteArray = new Uint8Array(byteNumbers);
+      const imageBlob = new Blob([byteArray], { type: 'image/jpeg' });
+ 
+      const snapshot = await uploadBytes(imageRef, imageBlob);
+      console.log('Image uploaded successfully:', snapshot);
+ 
+      // Get download URL of the uploaded image
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      console.log('Download URL:', downloadURL);
+ 
+      const db = firestore;
+      console.log(db);
+ 
+      const personsRef = collection(db, 'Persons');
 
-    fetchData();
-  }, []);
+      const data = {
+        Photo: downloadURL
+      };
 
-  const filteredPersons = personsData.filter((person) => {
-    const names = Object.values(person);
-    return names.some(
-      (name) =>
-        name && name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+      names.forEach((name, index) => {
+        data[`Person${index + 1}`] = name;
+      });
 
+      await addDoc(personsRef, data);
+      setImageUploaded(true); // Set imageUploaded to true after successful upload
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+ 
   return (
-    <div className="gallery">
-      <h1>Image Gallery</h1>
-      <input
-        type="text"
-        placeholder="Search by name"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <div className="image-grid">
-        {filteredPersons.map((person, index) => (
-          <div key={index} className="image-item">
-            <div className="image-box">
-              <img src={person.Photo} alt={`Person ${index + 1}`} />
-            </div>
-            <div className="image-details">
-              {Object.values(person)
-                .filter((name) => typeof name === 'string' && name !== person.Photo)
-                .map((name, nameIndex) => (
-                  <p key={nameIndex}>{name}</p>
-                ))}
-            </div>
-          </div>
-        ))}
+    <div>
+      <h2>Display:</h2>
+      <div id="display-container">
+        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       </div>
     </div>
   );
 };
-
-export default DisplayPersons;
+ 
+export default DisplayPage;

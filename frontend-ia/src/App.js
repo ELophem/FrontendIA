@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {Navbar} from './Navbar/Navbar';
 import HomePage from './Home/Home';
-import GalleryPage from './Gallery/Gallery';
-import UploadPage from './Upload/Upload';
 import DisplayPage from './Display/Display';
+import UploadPage from './Upload/Upload';
+import GalleryPage from './Gallery/Gallery';
 
 const App = () => {
   return (

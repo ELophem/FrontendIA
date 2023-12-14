@@ -12,7 +12,7 @@ const UploadPage = () => {
     setFile(uploadedFile);
   };
 
-  const handleGoToGallery = async () => {
+  const handleGoToDisplay = async () => {
     if (file) {
       try {
         const formData = new FormData();
@@ -21,8 +21,8 @@ const UploadPage = () => {
         const response = await axios.post('http://127.0.0.1:5000/recognize', formData);
         console.log('Response from backend:', response.data);
 
-        // Redirect to GalleryPage after sending the image to the backend
-        navigate(`/Gallery?file=${encodeURIComponent(URL.createObjectURL(file))}`,{
+        // Redirect to DisplayPage after sending the image to the backend
+        navigate(`/Display?file=${encodeURIComponent(URL.createObjectURL(file))}`,{
           state: {names: response.data}
         });
       } catch (error) {
@@ -43,7 +43,7 @@ const UploadPage = () => {
           <img src={URL.createObjectURL(file)} alt="Uploaded file" style={{ maxWidth: '100%', height: 'auto' }} />
         </div>
       )}     
-      <button onClick={handleGoToGallery}>Go to Gallery</button>
+      <button onClick={handleGoToDisplay}>Go to Display</button>
     </div>
   );
 };
