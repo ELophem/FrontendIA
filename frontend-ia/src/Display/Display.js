@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { getDownloadURL} from 'firebase/storage'; 
 import { firestore } from '../Firebase/firebaseConfig';
 import { addDoc, collection } from 'firebase/firestore';
+import './Display.css'
  
 const DisplayPage = () => {
   const location = useLocation();
@@ -40,6 +41,7 @@ const DisplayPage = () => {
        
         const AIimageElement = document.createElement('img');
         AIimageElement.src = AIimage;
+        AIimageElement.classList.add('display-image');
 
         const displayContainer = document.getElementById('display-container');
         displayContainer.innerHTML = '';
@@ -93,18 +95,19 @@ const DisplayPage = () => {
       });
 
       await addDoc(personsRef, data);
-      setImageUploaded(true); // Set imageUploaded to true after successful upload
+      setImageUploaded(true);
     } catch (error) {
       console.error('Error uploading image:', error);
     }
   };
- 
+  const formattedNames = names.join(', ').replace(/,(?!.*,)/gmi, ' and');
   return (
-    <div>
-      <h2>Display:</h2>
-      <div id="display-container">
-        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+    <div className='display-page-container'>
+      <h2 className='page-title'>AI result</h2>
+      <div id="display-container" className='display-container'>
+        <canvas ref={canvasRef} style={{ display: 'none' }}className='display-canvas'></canvas>
       </div>
+      <p className="names-detected">The AI detected that {formattedNames} {names.length>1? 'are' : 'is'} in this image</p>
     </div>
   );
 };
