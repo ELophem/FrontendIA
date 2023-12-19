@@ -32,8 +32,9 @@ const GalleryPersons = () => {
   });
 
   return (
+    <div className='gallery-container'>
     <div className="gallery">
-      <h1>Image Gallery</h1>
+      <h1 className='page-title'>Image Gallery</h1>
       <input
         type="text"
         placeholder="Search by name"
@@ -56,6 +57,7 @@ const GalleryPersons = () => {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

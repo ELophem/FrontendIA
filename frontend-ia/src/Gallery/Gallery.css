@@ -1,4 +1,15 @@
+.gallery-container {
+  max-width: max-content;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
 .gallery {
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,13 +20,20 @@
 h1 {
   margin-bottom: 20px;
 }
+.page-title {
+  font-size: 2em;
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap
+}
 
 input[type="text"] {
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
-  width: 250px; /* Adjust width as needed */
+  width: 250px;
 }
 
 .image-grid {
