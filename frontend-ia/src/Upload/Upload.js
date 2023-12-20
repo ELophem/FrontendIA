@@ -4,26 +4,27 @@ import { useNavigate } from 'react-router-dom';
 import './Upload.css'; 
 
 const UploadPage = () => {
+  //State variables to manage file and loading state
   const [file, setFile] = useState();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //Loading state of the AI
   const navigate = useNavigate();
-
+  //Function to handle file input change
   const handleChange = (e) => {
     const uploadedFile = e.target.files[0];
     setFile(uploadedFile);
   };
-
+  //function to send the uploaded image to the backend for processing through the AI
   const handleGoToDisplay = async () => {
     if (file) {
       try {
         setLoading(true);
-
+        //Create a formdata object and append the uploaded file 
         const formData = new FormData();
         formData.append('image', file);
-
+        //Send a post request to the backend with the uploaded image
         const response = await axios.post('http://127.0.0.1:5000/recognize', formData);
         console.log('Response from backend:', response.data);
-
+        //Go to the Display page with the image url and the processed data 
         navigate(`/Display?file=${encodeURIComponent(URL.createObjectURL(file))}`, {
           state: { names: response.data },
         });
@@ -36,7 +37,7 @@ const UploadPage = () => {
       console.error('Please select a file.');
     }
   };
-
+//Render the upload page
   return (
     <div className="uploadpage-content">
     <div className="upload-container">
