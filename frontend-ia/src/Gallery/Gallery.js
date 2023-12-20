@@ -88,7 +88,7 @@ const GalleryPersons = () => {
                         />
                       </div>
                     ))}
-                    <button onClick={() => handleSaveClick(index)}>Save</button>
+                    <button className='editButton' onClick={() => handleSaveClick(index)}>Save</button>
                   </div>
                 ) : (
                   <>
@@ -98,7 +98,7 @@ const GalleryPersons = () => {
                       }
                       return null;
                     })}
-                    <button onClick={() => handleEditClick(index)}>Edit Persons</button>
+                    <button className='editButton' onClick={() => handleEditClick(index)}>Edit</button>
                   </>
                 )}
               </div>
