@@ -1,3 +1,4 @@
+//Firebase Config file to be able to communicate with our FireBase database
 import {initializeApp} from 'firebase/app';
 import {getStorage} from 'firebase/storage';
 import {getFirestore} from 'firebase/firestore';

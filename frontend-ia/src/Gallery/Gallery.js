@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import './Gallery.css'
+// Gallery page where all the images will be shown
+
 
 const GalleryPersons = () => {
-  const [personsData, setPersonsData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-
+  const [personsData, setPersonsData] = useState([]); //Store fetched Data
+  const [searchTerm, setSearchTerm] = useState(''); // Store the search term from the searchbar
+  //When the components mount it fetches the data from firebase 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const db = getFirestore();
+        const db = getFirestore(); //Get data from the Firestore collection 'Persons'
         const personsCollection = collection(db, 'Persons');
         const querySnapshot = await getDocs(personsCollection);
-
+        //Get the data from the documents and update the state
         const persons = querySnapshot.docs.map((doc) => doc.data());
         setPersonsData(persons);
       } catch (error) {
@@ -20,9 +22,9 @@ const GalleryPersons = () => {
       }
     };
 
-    fetchData();
+    fetchData(); //Invoke this function when component mounts
   }, []);
-
+  //Filtered persons to show based on the search term in the search bar 
   const filteredPersons = personsData.filter((person) => {
     const names = Object.values(person);
     return names.some(
@@ -30,7 +32,7 @@ const GalleryPersons = () => {
         name && name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-
+  //Render gallery elements
   return (
     <div className='gallery-container'>
     <div className="gallery">
