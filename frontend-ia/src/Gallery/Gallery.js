@@ -55,6 +55,14 @@ const GalleryPersons = () => {
       console.error('Error updating persons:', error);
     }
   };
+   //Filtered persons to show based on the search term in the search bar 
+   const filteredPersons = personsData.filter((person) => {
+    const names = Object.values(person);
+    return names.some(
+      (name) =>
+        name && name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className='gallery-container'>
@@ -67,7 +75,7 @@ const GalleryPersons = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div className="image-grid">
-          {personsData.map((person, index) => (
+          {filteredPersons.map((person, index) => (
             <div key={index} className="image-item">
               <div className="image-box">
                 <img src={person.Photo} alt={`Person ${index + 1}`} />
